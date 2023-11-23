@@ -62,4 +62,4 @@ class Synthesizer:
                     if gate.output in temp_output:
                         temp_output.remove(gate.output)
         
-        print(temp_nets)
+        return temp_nets
