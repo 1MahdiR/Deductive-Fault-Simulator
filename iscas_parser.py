@@ -3,8 +3,9 @@
 # 
 
 class Parser:
-    def __init__(self, file):
-        self.data = file.readlines()
+    def __init__(self, bench_file, input_file):
+        self.bench_data = bench_file.readlines()
+        self.input_data = input_file.readlines()
 
     def parse_bench(self):
 
@@ -12,7 +13,7 @@ class Parser:
         outputs = []
         gates = []
 
-        for line in self.data:
+        for line in self.bench_data:
             if "INPUT" in line:
                 start_p = line.find("(")
                 end_p = line.find(")")
@@ -37,3 +38,15 @@ class Parser:
                 gates.append((gate_output, gate_type, gate_inputs))
         
         return (inputs, outputs, gates)
+
+    def parse_input(self):
+        input_vector = dict()
+        lines = [ x[:-1] for x in self.input_data ]
+
+        input_numbers = lines[0].split()
+        input_values = lines[1].split()
+        inputs = list(zip(input_numbers, input_values))
+        for input_number, input_value in inputs:
+            input_vector[input_number] = input_value
+
+        return input_vector
