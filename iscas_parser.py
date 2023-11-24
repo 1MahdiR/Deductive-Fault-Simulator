@@ -3,9 +3,10 @@
 # 
 
 class Parser:
-    def __init__(self, bench_file, input_file):
+    def __init__(self, bench_file, true_value_input_file, deductive_fault_input_file):
         self.bench_data = bench_file.readlines()
-        self.input_data = input_file.readlines()
+        self.true_value_input_data = true_value_input_file.readlines()
+        self.deductive_fault_input_data = deductive_fault_input_file.readlines()
 
     def parse_bench(self):
 
@@ -40,13 +41,23 @@ class Parser:
         return (inputs, outputs, gates)
 
     def parse_input(self):
-        input_vector = dict()
-        lines = [ x[:-1] for x in self.input_data ]
+        true_value_input_vector = dict()
+        lines = [ x[:-1] for x in self.true_value_input_data ]
 
         input_numbers = lines[0].split()
         input_values = lines[1].split()
         inputs = list(zip(input_numbers, input_values))
         for input_number, input_value in inputs:
-            input_vector[input_number] = input_value
+            true_value_input_vector[input_number] = input_value
 
-        return input_vector
+        deductive_fault_input_vector = dict()
+        lines = [ x[:-1] for x in self.deductive_fault_input_data ]
+
+        input_numbers = lines[0].split()
+        input_values = lines[1].split()
+        inputs = list(zip(input_numbers, input_values))
+        for input_number, input_value in inputs:
+            deductive_fault_input_vector[input_number] = input_value
+
+        return (true_value_input_vector, deductive_fault_input_vector)
+

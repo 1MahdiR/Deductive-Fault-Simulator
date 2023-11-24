@@ -1,7 +1,7 @@
 #
 #   ISCAS Simulator
 #   Author: MR
-#   Usage: Run command 'python3 main.py test.bench vector.test'
+#   Usage: Run command 'python3 main.py test.bench vector1.test vector2.test'
 #
 
 import sys
@@ -12,7 +12,8 @@ from gates import *
 
 if __name__ == "__main__":
     bench_file_path = sys.argv[1]
-    input_file_path = sys.argv[2]
+    true_value_simulation_input_file_path = sys.argv[2]
+    deductive_fault_simulation_input_file_path = sys.argv[3]
 
     inputs = None
     outputs = None
@@ -20,14 +21,16 @@ if __name__ == "__main__":
     gates = []
 
     bench_file = open(bench_file_path, "r")
-    input_file = open(input_file_path, "r")
-    parser = Parser(bench_file, input_file)
+    true_value_simulation_input_file = open(true_value_simulation_input_file_path, "r")
+    deductive_fault_simulation_input_file = open(deductive_fault_simulation_input_file_path, "r")
+    parser = Parser(bench_file, true_value_simulation_input_file, deductive_fault_simulation_input_file)
 
     bench_file.close()
-    input_file.close()
+    true_value_simulation_input_file.close()
+    deductive_fault_simulation_input_file.close()
 
     inputs, outputs, gates_list = parser.parse_bench()
-    input_vector = parser.parse_input()
+    true_value_input_vector, deductive_fault_input_vector = parser.parse_input()
 
     for gate_tuple in gates_list:
         gate_output, gate_type, gate_inputs = gate_tuple
@@ -54,7 +57,7 @@ if __name__ == "__main__":
 
     synthesizer = Synthesizer(inputs, outputs, gates)
 
-    nets = synthesizer(input_vector)
+    nets = synthesizer(true_value_input_vector)
 
     print("True-value simulation:")
     for key, value in nets.items():
@@ -63,11 +66,10 @@ if __name__ == "__main__":
                 print("%s: %s" % (key2, value2))
         else:
             print("%s: %s" % (key, value))
-
-    if (not UNKNOWN in input_vector.values()) and (not HI_IMPEDANCE in input_vector.values()):
-        print()
-        print("Deductive fault simulation:")
-        faults = synthesizer.deductive_fault_simulation(input_vector)
-        for key, value in faults.items():
-            text = ", ".join(list(value))
-            print("{}: {}".format(key, text))
+    
+    print()
+    print("Deductive fault simulation:")
+    faults = synthesizer.deductive_fault_simulation(deductive_fault_input_vector)
+    for key, value in faults.items():
+        text = ", ".join(list(value))
+        print("{}: {}".format(key, text))
