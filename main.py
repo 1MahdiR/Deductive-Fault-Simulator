@@ -56,9 +56,18 @@ if __name__ == "__main__":
 
     nets = synthesizer(input_vector)
 
+    print("True-value simulation:")
     for key, value in nets.items():
         if type(value) == dict:
             for key2, value2 in value.items():
                 print("%s: %s" % (key2, value2))
         else:
             print("%s: %s" % (key, value))
+
+    if (not UNKNOWN in input_vector.values()) and (not HI_IMPEDANCE in input_vector.values()):
+        print()
+        print("Deductive fault simulation:")
+        faults = synthesizer.deductive_fault_simulation(input_vector)
+        for key, value in faults.items():
+            text = ", ".join(list(value))
+            print("{}: {}".format(key, text))
