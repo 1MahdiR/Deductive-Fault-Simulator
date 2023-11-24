@@ -60,6 +60,7 @@ if __name__ == "__main__":
     nets = synthesizer(true_value_input_vector)
 
     print("True-value simulation:")
+    print("Input vector: {}".format(true_value_input_vector))
     for key, value in nets.items():
         if type(value) == dict:
             for key2, value2 in value.items():
@@ -69,6 +70,7 @@ if __name__ == "__main__":
     
     print()
     print("Deductive fault simulation:")
+    print("Input vector: {}".format(deductive_fault_input_vector))
     faults = synthesizer.deductive_fault_simulation(deductive_fault_input_vector)
     for key, value in faults.items():
         text = ", ".join(list(value))
