@@ -111,6 +111,8 @@ class NOT:
         self.output = output
 
     def __call__(self, inputs):
+        if not len(inputs):
+            raise ValueError("Input vector does not match the gate's definition!")
         if inputs[0] == HIGH:
             return LOW
         if inputs[0] == HI_IMPEDANCE:
@@ -125,6 +127,8 @@ class BUFF:
         self.output = output
 
     def __call__(self, inputs):
+        if not len(inputs):
+            raise ValueError("Input vector does not match the gate's definition!")
         if inputs[0] == HIGH:
             return HIGH
         if inputs[0] == HI_IMPEDANCE:
