@@ -55,7 +55,11 @@ if __name__ == "__main__":
 
         gates.append(gate)
 
+    print('Message: Gates fully syntheized!')
+
     synthesizer = Synthesizer(inputs, outputs, gates)
+
+    print('Message: Synthesizer ready!')
 
     nets = synthesizer(true_value_input_vector)
 
