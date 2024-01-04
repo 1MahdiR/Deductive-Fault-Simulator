@@ -22,7 +22,7 @@ class AND:
         if UNKNOWN in inputs:
             return UNKNOWN
         if HI_IMPEDANCE in inputs:
-            return HI_IMPEDANCE
+            return UNKNOWN
         return HIGH
     
 class OR:
@@ -35,9 +35,9 @@ class OR:
             raise ValueError("Input vector does not match the gate's definition!")
         if HIGH in inputs:
             return HIGH
-        if HI_IMPEDANCE in inputs:
-            return HI_IMPEDANCE
         if UNKNOWN in inputs:
+            return UNKNOWN
+        if HI_IMPEDANCE in inputs:
             return UNKNOWN
         return LOW
     
@@ -54,7 +54,7 @@ class NAND:
         if UNKNOWN in inputs:
             return UNKNOWN
         if HI_IMPEDANCE in inputs:
-            return HI_IMPEDANCE
+            return UNKNOWN
         return LOW
     
 class NOR:
@@ -67,9 +67,9 @@ class NOR:
             raise ValueError("Input vector does not match the gate's definition!")
         if HIGH in inputs:
             return LOW
-        if HI_IMPEDANCE in inputs:
-            return HI_IMPEDANCE
         if UNKNOWN in inputs:
+            return UNKNOWN
+        if HI_IMPEDANCE in inputs:
             return UNKNOWN
         return HIGH
     
@@ -84,7 +84,7 @@ class XOR:
         if UNKNOWN in inputs:
             return UNKNOWN
         if HI_IMPEDANCE in inputs:
-            return HI_IMPEDANCE
+            return UNKNOWN
         if inputs.count(HIGH) % 2 == 1: # Number of high inputs is odd
             return HIGH
         return LOW
@@ -100,7 +100,7 @@ class XNOR:
         if UNKNOWN in inputs:
             return UNKNOWN
         if HI_IMPEDANCE in inputs:
-            return HI_IMPEDANCE
+            return UNKNOWN
         if inputs.count(HIGH) % 2 == 0: # Number of high inputs is even
             return HIGH
         return LOW
@@ -116,7 +116,7 @@ class NOT:
         if inputs[0] == HIGH:
             return LOW
         if inputs[0] == HI_IMPEDANCE:
-            return HI_IMPEDANCE
+            return UNKNOWN
         if inputs[0] == UNKNOWN:
             return UNKNOWN
         return HIGH
@@ -132,7 +132,7 @@ class BUFF:
         if inputs[0] == HIGH:
             return HIGH
         if inputs[0] == HI_IMPEDANCE:
-            return HI_IMPEDANCE
+            return UNKNOWN
         if inputs[0] == UNKNOWN:
             return UNKNOWN
         return LOW
