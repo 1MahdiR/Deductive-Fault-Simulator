@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     inputs, outputs, gates_list = parser.parse_bench()
     true_value_input_vector, deductive_fault_input_vector = parser.parse_input()
-
+    
     for gate_tuple in gates_list:
         gate_output, gate_type, gate_inputs = gate_tuple
         gate = None
@@ -79,3 +79,7 @@ if __name__ == "__main__":
     for key, value in faults.items():
         text = ", ".join(list(value))
         print("{}: {}".format(key, text))
+
+    print()
+    print("Fault table analysis:")
+    synthesizer.fault_table_analysis()

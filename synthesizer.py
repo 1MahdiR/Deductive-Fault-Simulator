@@ -4,8 +4,25 @@
 #
 
 import copy
+from tabulate import tabulate
 
 from gates import *
+
+def generate_binary_patterns(n):
+    if n <= 0:
+        return []
+
+    patterns = []
+    def backtrack(pattern):
+        if len(pattern) == n:
+            patterns.append(pattern)
+            return
+
+        backtrack(pattern + '0')
+        backtrack(pattern + '1')
+
+    backtrack('')
+    return patterns
 
 class Synthesizer:
     def __init__(self, inputs:list, outputs:list, gates:list):
@@ -252,3 +269,59 @@ class Synthesizer:
                             calculated_faults[line].add("{}(0)".format(line))
                     
         return calculated_faults
+    
+    def exhuastic_method(self):
+        patterns = generate_binary_patterns(len(self.inputs))
+        test_vector = dict()
+
+        all_faults = dict()
+
+        for pattern in patterns:
+            for i, j in zip(pattern, self.inputs):
+                test_vector[j] = i
+            
+            faults = self.deductive_fault_simulation(test_vector)
+
+            all_faults[pattern] = dict()
+            
+            output_faults = set()
+            for i in self.outputs:
+                for j in faults[i]:
+                    output_faults.add(j)
+            
+            all_faults[pattern] = output_faults
+
+        return all_faults
+    
+    def fault_table_analysis(self):
+        all_detectable_faults = self.exhuastic_method()
+        all_faults = list()
+        for line in self.nets.keys():
+            if type(self.nets[line]) == dict:
+                for i in self.nets[line].keys():
+                    all_faults.append("{}(0)".format(i))
+                    all_faults.append("{}(1)".format(i))
+            else:
+                all_faults.append("{}(0)".format(line))
+                all_faults.append("{}(1)".format(line))
+        all_faults.sort()
+        
+        faults_row = set()
+        for i, j in all_detectable_faults.items():
+            for k in j:
+                faults_row.add(k)
+
+        faults_row = sorted(list(faults_row))
+        fault_data = list()
+        for pattern, faults in all_detectable_faults.items():
+            ls = [pattern]
+            for fault in all_faults:
+                if fault in faults:
+                    ls.append("#")
+                else:
+                    ls.append("")
+            fault_data.append(ls)
+
+        
+        table = tabulate(fault_data, list(all_faults), tablefmt="grid")
+        print(table)
