@@ -222,9 +222,18 @@ class Synthesizer:
                     calculated_fault.add("{}(0)".format(gate_output))
                 
             elif type(gate) == XOR or type(gate) == XNOR:
+                fault_line = dict()
                 for gate_input, _ in gate_inputs:
-                        for item in calculated_faults[gate_input]:
-                            calculated_fault.add(item)
+                    faults = calculated_faults[gate_input]
+                    for fault in faults:
+                        if fault_line.get(fault):
+                            fault_line[fault].append(gate_input)
+                        else:
+                            fault_line[fault] = [gate_input]
+
+                for fault, inputs in fault_line.items():
+                    if len(inputs) % 2 == 1:
+                        calculated_fault.add(fault)
                 
                 if gate_output_value == "0":
                     calculated_fault.add("{}(1)".format(gate_output))
