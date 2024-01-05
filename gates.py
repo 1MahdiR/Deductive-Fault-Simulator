@@ -11,9 +11,10 @@ UNSET = "-"
 ###
 
 class AND:
-    def __init__(self, inputs:list, output):
+    def __init__(self, inputs:list, output, level):
         self.inputs = inputs
         self.output = output
+        self.level = level
 
     def __call__(self, inputs):
         if len(inputs) != len(self.inputs):
@@ -27,9 +28,10 @@ class AND:
         return HIGH
     
 class OR:
-    def __init__(self, inputs:list, output):
+    def __init__(self, inputs:list, output, level):
         self.inputs = inputs
         self.output = output
+        self.level = level
 
     def __call__(self, inputs):
         if len(inputs) != len(self.inputs):
@@ -43,9 +45,10 @@ class OR:
         return LOW
     
 class NAND:
-    def __init__(self, inputs:list, output):
+    def __init__(self, inputs:list, output, level):
         self.inputs = inputs
         self.output = output
+        self.level = level
 
     def __call__(self, inputs):
         if len(inputs) != len(self.inputs):
@@ -59,9 +62,10 @@ class NAND:
         return LOW
     
 class NOR:
-    def __init__(self, inputs:list, output):
+    def __init__(self, inputs:list, output, level):
         self.inputs = inputs
         self.output = output
+        self.level = level
 
     def __call__(self, inputs):
         if len(inputs) != len(self.inputs):
@@ -75,9 +79,10 @@ class NOR:
         return HIGH
     
 class XOR:
-    def __init__(self, inputs:list, output):
+    def __init__(self, inputs:list, output, level):
         self.inputs = inputs
         self.output = output
+        self.level = level
 
     def __call__(self, inputs):
         if len(inputs) != len(self.inputs):
@@ -91,9 +96,10 @@ class XOR:
         return LOW
     
 class XNOR:
-    def __init__(self, inputs:list, output):
+    def __init__(self, inputs:list, output, level):
         self.inputs = inputs
         self.output = output
+        self.level = level
 
     def __call__(self, inputs):
         if len(inputs) != len(self.inputs):
@@ -107,9 +113,10 @@ class XNOR:
         return LOW
     
 class NOT:
-    def __init__(self, inputs:list, output):
+    def __init__(self, inputs:list, output, level):
         self.inputs = inputs
         self.output = output
+        self.level = level
 
     def __call__(self, inputs):
         if not len(inputs):
@@ -123,9 +130,10 @@ class NOT:
         return HIGH
     
 class BUFF:
-    def __init__(self, inputs:list, output):
+    def __init__(self, inputs:list, output, level):
         self.inputs = inputs
         self.output = output
+        self.level = level
 
     def __call__(self, inputs):
         if not len(inputs):

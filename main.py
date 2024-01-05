@@ -37,21 +37,21 @@ if __name__ == "__main__":
         gate = None
         
         if gate_type == "AND":
-            gate = AND(gate_inputs, gate_output)
+            gate = AND(gate_inputs, gate_output, 0)
         elif gate_type == "OR":
-            gate = OR(gate_inputs, gate_output)
+            gate = OR(gate_inputs, gate_output, 0)
         elif gate_type == "NAND":
-            gate = NAND(gate_inputs, gate_output)
+            gate = NAND(gate_inputs, gate_output, 0)
         elif gate_type == "NOR":
-            gate = NOR(gate_inputs, gate_output)
+            gate = NOR(gate_inputs, gate_output, 0)
         elif gate_type == "XOR":
-            gate = XOR(gate_inputs, gate_output)
+            gate = XOR(gate_inputs, gate_output, 0)
         elif gate_type == "XNOR":
-            gate = XNOR(gate_inputs, gate_output)
+            gate = XNOR(gate_inputs, gate_output, 0)
         elif gate_type == "NOT":
-            gate = NOT(gate_inputs, gate_output)
+            gate = NOT(gate_inputs, gate_output, 0)
         elif gate_type == "BUFF":
-            gate = BUFF(gate_inputs, gate_output)
+            gate = BUFF(gate_inputs, gate_output, 0)
 
         gates.append(gate)
 

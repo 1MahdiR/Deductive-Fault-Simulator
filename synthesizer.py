@@ -13,6 +13,7 @@ class Synthesizer:
         self.outputs = outputs
         self.gates = gates
         self.nets = dict()
+        self.output_dependancy = dict()
 
         for gate in gates:
             for input_ in gate.inputs:
@@ -30,6 +31,24 @@ class Synthesizer:
         
         for output in self.outputs:
             self.nets[output] = UNKNOWN
+
+        while True:
+            for gate in self.gates:
+                max_level = 0
+                for input_ in gate.inputs:
+                    if input_ not in self.inputs:
+                        gatej = None
+                        for temp_gate in self.gates:
+                            if temp_gate.output == input_:
+                                gatej = temp_gate
+
+                        if max_level < gatej.level:
+                            max_level = gatej.level
+                gate.level = max_level + 1
+            if not 0 in [ x.level for x in self.gates ]:
+                break
+
+        #print([ (x.inputs, x.output, x.level) for x in self.gates ])
 
     def __call__(self, input_vector:dict):
 
@@ -71,6 +90,12 @@ class Synthesizer:
         calculated_faults = dict()
         true_value_simulation = self(input_vector)
 
+        for net in self.nets:
+            calculated_faults[net] = set()
+            if type(self.nets[net]) == dict:
+                for net2 in self.nets[net]:
+                    calculated_faults[net2] = set()
+
         output_dependancy = dict()
 
         temp_nets = copy.deepcopy(self.nets)
@@ -90,12 +115,6 @@ class Synthesizer:
                 else:
                     output_dependancy[gate_output].append((gate_input, gate_input_value))
 
-        for net in self.nets:
-            calculated_faults[net] = set()
-            if type(self.nets[net]) == dict:
-                for net2 in self.nets[net]:
-                    calculated_faults[net2] = set()
-
         for temp_input in self.inputs:
             value = input_vector[temp_input]
             if value == '0':
@@ -103,8 +122,7 @@ class Synthesizer:
             else:
                 calculated_faults[temp_input].add('{}(0)'.format(temp_input))
 
-        while True:
-            for net in calculated_faults:
+        for net in calculated_faults:
                 if (not calculated_faults[net]) and "_" in net:
                     net_main, net_branch = net.split("_")
                     if calculated_faults[net_main]:
@@ -121,97 +139,107 @@ class Synthesizer:
                                 calculated_faults[net].add('{}(1)'.format(net))
                             else:
                                 calculated_faults[net].add('{}(0)'.format(net))
+        
+        temp_gates = copy.deepcopy(self.gates)
+        temp_gates.sort(key=lambda x: x.level, reverse=True)
 
-            for gate in self.gates:
-                gate_output = gate.output
-                gate_output_value = None
-                if type(true_value_simulation[gate_output]) == dict:
-                    gate_output_value = list(true_value_simulation[gate_output].values())[0]
-                else:
-                    gate_output_value = true_value_simulation[gate_output]
-                gate_inputs = output_dependancy[gate_output]
+        while temp_gates:
+            gate = temp_gates.pop()
+            gate_output = gate.output
+            gate_output_value = None
+            if type(true_value_simulation[gate_output]) == dict:
+                gate_output_value = list(true_value_simulation[gate_output].values())[0]
+            else:
+                gate_output_value = true_value_simulation[gate_output]
 
-                calculated_fault = set()
-                
-                if type(gate) == NAND or type(gate) == AND:
-                    if "0" in [ x[1] for x in gate_inputs ]:
-                        ls = []
-                        for gate_input, value in gate_inputs:
-                            if value == "0":
-                                ls.append(calculated_faults[gate_input])
-                        ls_intersection = set.intersection(*ls)
-
-                        ls = []
-                        for gate_input, value in gate_inputs:
-                            if value == "1":
-                                ls.append(calculated_faults[gate_input])
-                        if ls:
-                            ls_union = set.union(*ls)
-                        else:
-                            ls_union = set()
-                        
-                        calculated_fault = ls_intersection.difference(ls_union)
-
-                    else:
-                        for gate_input, _ in gate_inputs:
-                            for item in calculated_faults[gate_input]:
-                                calculated_fault.add(item)
-                    
-                    if gate_output_value == "0":
-                        calculated_fault.add("{}(1)".format(gate_output))
-                    else:
-                        calculated_fault.add("{}(0)".format(gate_output))
-
-                elif type(gate) == NOR or type(gate) == OR:
-                    if "1" in [ x[1] for x in gate_inputs ]:
-                        ls = []
-                        for gate_input, value in gate_inputs:
-                            if value == "1":
-                                ls.append(calculated_faults[gate_input])
-                        ls_intersection = set.intersection(*ls)
-
-                        ls = []
-                        for gate_input, value in gate_inputs:
-                            if value == "0":
-                                ls.append(calculated_faults[gate_input])
-                        if ls:
-                            ls_union = set.union(*ls)
-                        else:
-                            ls_union = set()
-                        
-                        calculated_fault = ls_intersection.difference(ls_union)
-
-                    else:
-                        for gate_input, _ in gate_inputs:
-                            for item in calculated_faults[gate_input]:
-                                calculated_fault.add(item)
-                    
-                    if gate_output_value == "0":
-                        calculated_fault.add("{}(1)".format(gate_output))
-                    else:
-                        calculated_fault.add("{}(0)".format(gate_output))
-                
-                elif type(gate) == NOT or type(gate) == BUFF:
-                    gate_input, gate_input_value = gate_inputs[0]
-                    calculated_fault = calculated_faults[gate_input].copy()
-                    if gate_output_value == "0":
-                        calculated_fault.add("{}(1)".format(gate_output))
-                    else:
-                        calculated_fault.add("{}(0)".format(gate_output))
-                    
-                elif type(gate) == XOR or type(gate) == XNOR:
-                    for gate_input, _ in gate_inputs:
-                            for item in calculated_faults[gate_input]:
-                                calculated_fault.add(item)
-                    
-                    if gate_output_value == "0":
-                        calculated_fault.add("{}(1)".format(gate_output))
-                    else:
-                        calculated_fault.add("{}(0)".format(gate_output))
-
-                calculated_faults[gate_output] = calculated_fault
+            gate_inputs = output_dependancy[gate_output]
+            calculated_fault = set()
             
-            if not (set() in list(calculated_faults.values())):
-                break
+            if type(gate) == NAND or type(gate) == AND:
+                if "0" in [ x[1] for x in gate_inputs ]:
+                    ls = []
+                    for gate_input, value in gate_inputs:
+                        if value == "0":
+                            ls.append(calculated_faults[gate_input])
+                    ls_intersection = set.intersection(*ls)
 
+                    ls = []
+                    for gate_input, value in gate_inputs:
+                        if value == "1":
+                            ls.append(calculated_faults[gate_input])
+                    if ls:
+                        ls_union = set.union(*ls)
+                    else:
+                        ls_union = set()
+                    
+                    calculated_fault = ls_intersection.difference(ls_union)
+
+                else:
+                    for gate_input, _ in gate_inputs:
+                        for item in calculated_faults[gate_input]:
+                            calculated_fault.add(item)
+                
+                if gate_output_value == "0":
+                    calculated_fault.add("{}(1)".format(gate_output))
+                else:
+                    calculated_fault.add("{}(0)".format(gate_output))
+
+            elif type(gate) == NOR or type(gate) == OR:
+                if "1" in [ x[1] for x in gate_inputs ]:
+                    ls = []
+                    for gate_input, value in gate_inputs:
+                        if value == "1":
+                            ls.append(calculated_faults[gate_input])
+                    ls_intersection = set.intersection(*ls)
+
+                    ls = []
+                    for gate_input, value in gate_inputs:
+                        if value == "0":
+                            ls.append(calculated_faults[gate_input])
+                    if ls:
+                        ls_union = set.union(*ls)
+                    else:
+                        ls_union = set()
+                    
+                    calculated_fault = ls_intersection.difference(ls_union)
+
+                else:
+                    for gate_input, _ in gate_inputs:
+                        for item in calculated_faults[gate_input]:
+                            calculated_fault.add(item)
+                
+                if gate_output_value == "0":
+                    calculated_fault.add("{}(1)".format(gate_output))
+                else:
+                    calculated_fault.add("{}(0)".format(gate_output))
+            
+            elif type(gate) == NOT or type(gate) == BUFF:
+                gate_input, gate_input_value = gate_inputs[0]
+                calculated_fault = calculated_faults[gate_input].copy()
+                if gate_output_value == "0":
+                    calculated_fault.add("{}(1)".format(gate_output))
+                else:
+                    calculated_fault.add("{}(0)".format(gate_output))
+                
+            elif type(gate) == XOR or type(gate) == XNOR:
+                for gate_input, _ in gate_inputs:
+                        for item in calculated_faults[gate_input]:
+                            calculated_fault.add(item)
+                
+                if gate_output_value == "0":
+                    calculated_fault.add("{}(1)".format(gate_output))
+                else:
+                    calculated_fault.add("{}(0)".format(gate_output))
+
+            calculated_faults[gate_output] = calculated_fault
+
+            if type(true_value_simulation[gate_output]) == dict:
+                for line, value in true_value_simulation[gate_output].items():
+                    if "_" in line:
+                        calculated_faults[line] = calculated_fault.copy()
+                        if value == "0":
+                            calculated_faults[line].add("{}(1)".format(line))
+                        else:
+                            calculated_faults[line].add("{}(0)".format(line))
+                    
         return calculated_faults
