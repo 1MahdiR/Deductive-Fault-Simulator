@@ -325,3 +325,51 @@ class Synthesizer:
         
         table = tabulate(fault_data, list(all_faults), tablefmt="grid")
         print(table)
+
+        fault_test_vector_count = dict()
+        for fault in faults_row:
+            for pattern, faults in all_detectable_faults.items():
+                if fault in faults:
+                    if fault_test_vector_count.get(fault):
+                        fault_test_vector_count[fault] += 1
+                    else:
+                        fault_test_vector_count[fault] = 1
+
+        essential_vectors = []
+        
+        for pattern, faults in all_detectable_faults.items():
+            for fault in faults:
+                if fault_test_vector_count[fault] == 1:
+                    essential_vectors.append(pattern)
+                    break
+
+        covered_faults = dict()
+        for i in all_faults:
+            covered_faults[i] = False
+        
+        selected_vectors = essential_vectors.copy()
+
+        for pattern in selected_vectors:
+            faults = all_detectable_faults[pattern]
+            for fault in faults:
+                covered_faults[fault] = True
+
+        for pattern, faults in all_detectable_faults.items():
+            selected_vectors.append(pattern)
+            for fault in faults:
+                covered_faults[fault] = True
+            if not False in covered_faults.values():
+                break
+        
+        print()
+        print("Essential test vectors: ")
+        for i in essential_vectors:
+            print(i)
+
+        print()
+        print("Selected test vectors: ")
+        for i in selected_vectors:
+            print(i)
+
+        print()
+        print("Fault coverage: {}%".format(list(covered_faults.values()).count(True) * (100 / len(covered_faults.values()))))
