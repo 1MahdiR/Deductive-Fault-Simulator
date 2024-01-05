@@ -20,10 +20,11 @@ class Synthesizer:
                     value = self.nets.get(input_)
                     if type(value) == dict:
                         new_length = len(value) + 1
-                        value["{}_{}".format(input_, new_length)] = UNKNOWN
+                        value["{}_{}".format(input_, new_length)] = UNSET
                     else:
-                        self.nets[input_] = {"{}_1".format(input_):UNKNOWN}
-                        self.nets[input_]["{}_2".format(input_)] = UNKNOWN
+                        self.nets[input_] = {"{}".format(input_):UNSET}
+                        self.nets[input_]["{}_1".format(input_)] = UNSET
+                        self.nets[input_]["{}_2".format(input_)] = UNSET
                 else:
                     self.nets[input_] = UNKNOWN
         
@@ -54,7 +55,7 @@ class Synthesizer:
 
                 out = gate(gate_input_vector)
 
-                if out != UNKNOWN:
+                if out != UNSET:
                     if type(temp_nets[gate.output]) != dict:
                         temp_nets[gate.output] = out
                     else:

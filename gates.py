@@ -7,6 +7,7 @@ LOW = "0"
 HIGH = "1"
 UNKNOWN = "U"
 HI_IMPEDANCE = "Z"
+UNSET = "-"
 ###
 
 class AND:
