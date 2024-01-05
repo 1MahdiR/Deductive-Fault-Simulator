@@ -270,7 +270,7 @@ class Synthesizer:
                     
         return calculated_faults
     
-    def exhuastic_method(self):
+    def exhuastive_method(self):
         patterns = generate_binary_patterns(len(self.inputs))
         test_vector = dict()
 
@@ -305,7 +305,7 @@ class Synthesizer:
                 all_faults.append("{}(0)".format(line))
                 all_faults.append("{}(1)".format(line))
         all_faults.sort()
-        
+
         faults_row = set()
         for i, j in all_detectable_faults.items():
             for k in j:
