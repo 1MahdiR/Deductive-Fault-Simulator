@@ -37,7 +37,7 @@ class Synthesizer:
                 if self.nets.get(input_):
                     value = self.nets.get(input_)
                     if type(value) == dict:
-                        new_length = len(value) + 1
+                        new_length = len(value)
                         value["{}_{}".format(input_, new_length)] = UNSET
                     else:
                         self.nets[input_] = {"{}".format(input_):UNSET}
@@ -294,7 +294,7 @@ class Synthesizer:
         return all_faults
     
     def fault_table_analysis(self):
-        all_detectable_faults = self.exhuastic_method()
+        all_detectable_faults = self.exhuastive_method()
         all_faults = list()
         for line in self.nets.keys():
             if type(self.nets[line]) == dict:
