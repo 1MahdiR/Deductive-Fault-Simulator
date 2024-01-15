@@ -359,9 +359,10 @@ class Synthesizer:
                 covered_faults[fault] = True
 
         for pattern, faults in all_detectable_faults.items():
-            selected_vectors.append(pattern)
-            for fault in faults:
-                covered_faults[fault] = True
+            if not pattern in selected_vectors:
+                selected_vectors.append(pattern)
+                for fault in faults:
+                    covered_faults[fault] = True
             if not False in covered_faults.values():
                 break
         
