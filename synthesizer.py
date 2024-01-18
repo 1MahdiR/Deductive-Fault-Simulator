@@ -45,13 +45,9 @@ class Synthesizer:
                         self.nets[input_]["{}_2".format(input_)] = UNSET
                 else:
                     self.nets[input_] = UNSET
-                    print(gate)
-                    print(gate.inputs)
         
         for output in self.outputs:
             self.nets[output] = UNSET
-
-        print(self.nets)
 
         while True:
             for gate in self.gates:
