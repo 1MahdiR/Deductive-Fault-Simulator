@@ -5,7 +5,7 @@ According to the [this](https://doi-org.access.semantak.com/10.1109/T-C.1972.223
 This tool is a simulator that reads a logic circuit file using ISCAS standard format and runs a deductive fault simulation based on the input vector that is given to it.
 
 <img src="images/iscas_example.png" alt="iscas_example.png" />
-_c17.bench file and its corresponding circuit_
+c17.bench file and its corresponding circuit
 
 <br/><br/><br/>
 
