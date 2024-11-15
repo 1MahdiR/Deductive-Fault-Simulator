@@ -19,7 +19,7 @@ This was originally my project for the "testability" course I had last semester.
 $ python3 main.py [circuit file] [true-value simulation input file] [deductive fault simulation input file]
 ```
 
-I also included a `test_vector_generator.py` script for large circuits. It reads a circuit file and generates two input files, `true_value_input.txt` and `deductive_fault_input.txt`. And this is to use it:
+I also included a `test_vector_generator.py` script for large circuits. It reads a circuit file and generates two input files, `true_value_input.txt` and `deductive_fault_input.txt`. And this is how to use it:
 ```
 $ python3 test_vector_generator.py [circuit file]
 ```
