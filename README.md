@@ -1,6 +1,6 @@
 # Deductive Fault Simulator
 
-According to the [this](https://doi-org.access.semantak.com/10.1109/T-C.1972.223542) "deductive fault simulation" is a method which "deduces" the faults defected by a test at the same time that it simulates explicitly only the good behavior of logic circuit. For large logic circuits (at least several thousand gates) it is expected to be faster than "parallel" fault simulators, but uses much more computer memory than do parallel simulators.
+According to [this](https://doi-org.access.semantak.com/10.1109/T-C.1972.223542) "deductive fault simulation" is a method which "deduces" the faults defected by a test at the same time that it simulates explicitly only the good behavior of logic circuit. For large logic circuits (at least several thousand gates) it is expected to be faster than "parallel" fault simulators, but uses much more computer memory than do parallel simulators.
 
 This tool is a simulator that reads a logic circuit file using ISCAS standard format and runs a deductive fault simulation based on the input vector that is given to it.
 
